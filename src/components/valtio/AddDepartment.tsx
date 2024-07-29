@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { addEmployee, addEngineering, store,  }  from '../../stores/valtio-store';
-import { useSnapshot } from 'valtio';
+import { addEmployee, addEngineering,  }  from '../../stores/valtio-store';
 
 const inputStyle = {
   margin: '5px',

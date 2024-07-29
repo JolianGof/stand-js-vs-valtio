@@ -1,5 +1,4 @@
-import { proxy, useSnapshot } from 'valtio';
-import { proxySet } from 'valtio/utils';
+import { createStore } from 'stan-js'
 
 type Employee = {
   firstName: string;
@@ -28,8 +27,7 @@ type CompanyState = {
   todos:Todo[],
 };
 
-export const store = proxy<CompanyState>({
-  company: {
+export const { useStore,batchUpdates,actions,getState } = createStore<CompanyState>({  company: {
     name: 'Acme Corporation',
     departments: {
       sales: {
@@ -63,50 +61,27 @@ export const store = proxy<CompanyState>({
 
 
 export const addTodo = (description: string) => {
-  store.todos.push({
-    description,
-    status: 'pending',
-    id: Date.now(),
-  })
+actions.setTodos([...getState().todos,{
+  description,
+  status: 'pending',
+  id: Date.now(),
+}])
+  console.log(batchUpdates)
+ 
 }
 
 
-// Add Function
-const addEmployee = (department: string, employee: Employee) => {
-//   store.company.departments[department].employees[newEmployeeKey] = employee;
-};
+
 export const addEngineering = ({firstName,lastName}:{firstName:string,lastName:string}) => {
-  const engineeringEmployees = store?.company?.departments?.engineering?.employees || {};
+  const engineeringEmployees = getState()?.company?.departments?.engineering?.employees;
   const objLength = Object.keys(engineeringEmployees).length + 1;
   const newEmployeeKey = `employee${objLength}`;
-
-  const newDepartment = {
-    ...engineeringEmployees,
-    [newEmployeeKey]: { firstName, lastName }
-  };
-
-  // Update the engineering department's employees
-  if (store && store.company && store.company.departments && store.company.departments.engineering) {
-    store.company.departments.engineering.employees = newDepartment;
-  } else {
-    // Handle the case where the store or its properties are undefined
-    console.error('Failed to update engineering department employees. The store or its properties are undefined.');
-  }
+  actions.setCompany({...getState().company,departments:{
+      ...getState().company.departments,
+      engineering:{...getState().company.departments.engineering,
+        employees:{...getState().company.departments.engineering.employees,
+          [newEmployeeKey]:{firstName,lastName}}},
+  }})
 };
 
-const addEmployeeToSales = (employee: { firstName: string; lastName: string }) => {
-    const snap = store;
-    const newEmployeeKey = `employee${Object.keys(snap.company.departments['sales'].employees).length + 1}` as keyof typeof snap.company.departments['sales']['employees'];
-    store.company.departments['sales'].employees[newEmployeeKey] = employee;
-  };
-// Remove Function
-const removeEmployee = (department: string, employeeKey: string) => {
-  delete store.company.departments[department].employees[employeeKey as keyof Department['employees']];
-};
 
-// Update Function
-const updateEmployee = (department: string, employeeKey: string, updatedEmployee: Employee) => {
-  store.company.departments[department].employees[employeeKey as keyof Department['employees']] = updatedEmployee;
-};
-
-export { addEmployee,addEmployeeToSales, removeEmployee, updateEmployee };

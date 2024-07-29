@@ -1,10 +1,9 @@
-import { useSnapshot } from 'valtio'
-import { store } from '../../stores/valtio-store'
+import { useStore } from '../../stores/valtio-store'
 
 const Sales = () => {
-    const snap = useSnapshot(store)
+    const snap = useStore()
   return (
-    <div>{Object.values(snap?.company?.departments?.sales?.employees).map((value)=>{
+    <div>{Object.values(snap?.company?.departments?.sales?.employees).map(()=>{
 
         return (
             <div>sales</div>

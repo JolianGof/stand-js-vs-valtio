@@ -1,8 +1,7 @@
-import { useSnapshot } from "valtio"
-import { addTodo, store } from "../../stores/valtio-store"
+import { useStore } from "../../stores/valtio-store"
 
 export   const Todos = () => {
-    const snap = useSnapshot(store)
+    const snap = useStore()
     return (
       <ul>
       {snap.todos.map(({ description, status, id }) => {
